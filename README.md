@@ -1,2 +1,3 @@
 # advent-2022
-solutions for the 2022 version of http://adventofcode.com/
+
+wherein I try to solve the 2022 [advent of code](http://adventofcode.com/) whilst learning `golang`
