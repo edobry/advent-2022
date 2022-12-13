@@ -18,7 +18,8 @@ func main() {
 		i++
 	}
 
-	fmt.Printf("part 1 result: %d\n", partOne(priorities))
+	// fmt.Printf("part 1 result: %d\n", partOne(priorities))
+	fmt.Printf("part 2 result: %d\n", partTwo(priorities))
 	// parseInput(partTwo)
 }
 
@@ -75,10 +76,54 @@ func partOne(priorities map[rune]int) int {
 	return sum
 }
 
-// func partOne() {
+func partTwo(priorities map[rune]int) int {
+	// open file stream
+	file, err := os.Open("input.txt")
+	// file, err := os.Open("sample.txt")
 
-// }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// func partTwo() {
+	// make sure we close it eventually
+	defer file.Close()
 
-// }
+	// create stream scanner
+	scanner := bufio.NewScanner(file)
+
+	// iterate over scanner chunks(?)
+	sum := 0
+	// groups := make([][]string, 0)
+	currentGroup := make([]string, 0)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if len(currentGroup) < 2 {
+			currentGroup = append(currentGroup, line)
+			continue
+		}
+
+		var firstRucksack map[byte]bool = make(map[byte]bool)
+		var secondRucksack map[byte]bool = make(map[byte]bool)
+		for i := range currentGroup[0] {
+			firstRucksack[currentGroup[0][i]] = true
+		}
+		for i := range currentGroup[1] {
+			secondRucksack[currentGroup[1][i]] = true
+		}
+		for _, i := range line {
+			if firstRucksack[byte(i)] && secondRucksack[byte(i)] {
+				fmt.Printf("item type '%c' is shared; priority %d\n", i, priorities[rune(i)])
+				sum += priorities[rune(i)]
+				currentGroup = make([]string, 0)
+				break
+			}
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return sum
+}
