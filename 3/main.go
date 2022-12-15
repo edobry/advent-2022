@@ -18,9 +18,8 @@ func main() {
 		i++
 	}
 
-	// fmt.Printf("part 1 result: %d\n", partOne(priorities))
+	fmt.Printf("part 1 result: %d\n", partOne(priorities))
 	fmt.Printf("part 2 result: %d\n", partTwo(priorities))
-	// parseInput(partTwo)
 }
 
 // func parseInput() {
