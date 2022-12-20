@@ -8,10 +8,12 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 func main() {
 	parseInput(partOne)
+	parseInput(partTwo)
 	// fmt.Printf("part 1 result: %d\n", parseInput(partOne))
 	// fmt.Printf("part 2 result: %d\n", parseInput(partTwo))
 }
@@ -27,7 +29,7 @@ func prependString(slice []string, val string) []string {
 }
 
 // func parseInput() {
-func parseInput(predicate func()) {
+func parseInput(movePopped func([]string, int, map[int][]string)) {
 	// open file stream
 	file, err := os.Open("input.txt")
 	// file, err := os.Open("sample.txt")
@@ -63,7 +65,7 @@ func parseInput(predicate func()) {
 					result[name] = match[i]
 				}
 			}
-			fmt.Println(result)
+			// fmt.Println(result)
 
 			// execute moves
 
@@ -81,15 +83,14 @@ func parseInput(predicate func()) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(stacks[fromStack])
-			fmt.Println(stacks[toStack])
+			// fmt.Println(stacks[fromStack])
+			// fmt.Println(stacks[toStack])
 
 			popped := stacks[fromStack][0:quantity]
-			fmt.Println(popped)
+			// fmt.Println(popped)
 			stacks[fromStack] = stacks[fromStack][quantity:]
-			for _, x := range popped {
-				stacks[toStack] = prependString(stacks[toStack], x)
-			}
+			// fmt.Println(stacks[fromStack])
+			movePopped(popped, toStack, stacks)
 		}
 		if readingMiddle {
 			if len(line) != 0 {
@@ -117,7 +118,7 @@ func parseInput(predicate func()) {
 				}
 				if !openBrace {
 					if _, err := strconv.Atoi(string(x)); err == nil {
-						fmt.Println("finished reading start")
+						fmt.Printf("finished reading start\n\n")
 						readingStart = false
 						readingMiddle = true
 						break
@@ -138,7 +139,7 @@ func parseInput(predicate func()) {
 			}
 		}
 
-		fmt.Println(stacks)
+		// fmt.Println(stacks)
 
 	}
 
@@ -155,19 +156,25 @@ func parseInput(predicate func()) {
 		stackI++
 	}
 	sort.Ints(stackNames)
-	fmt.Println(stackNames)
+	// fmt.Println(stackNames)
 
 	tops := make([]string, len(stacks))
 	for i := range stackNames {
-		fmt.Println(stackNames[i])
-		fmt.Println(stacks[stackNames[i]])
+		// fmt.Println(stackNames[i])
+		// fmt.Println(stacks[stackNames[i]])
 		tops[i] = stacks[stackNames[i]][0]
 	}
-	fmt.Printf("result: %s", tops)
+	fmt.Printf("result: %s", strings.Join(tops, ""))
 }
 
-func partOne() {
+func partOne(popped []string, stack int, stacks map[int][]string) {
+	for _, x := range popped {
+		stacks[stack] = prependString(stacks[stack], x)
+	}
 }
 
-// func partTwo() {
-// }
+func partTwo(popped []string, stack int, stacks map[int][]string) {
+	newPopped := make([]string, len(popped))
+	copy(newPopped, popped)
+	stacks[stack] = append(newPopped, stacks[stack]...)
+}
